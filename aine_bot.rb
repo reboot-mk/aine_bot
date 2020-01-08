@@ -8,10 +8,10 @@ class AineBot
 		@media_path = media_path
 		
 		@client = Twitter::REST::Client.new do |config|
-		  config.consumer_key        = consumer_key
-		  config.consumer_secret     = consumer_secret
-		  config.access_token        = access_token
-		  config.access_token_secret = access_token_secret
+			config.consumer_key			= consumer_key
+			config.consumer_secret		= consumer_secret
+			config.access_token 		= access_token
+			config.access_token_secret 	= access_token_secret
 		end
 
 		@logger = Logger.new('bot.log')
@@ -40,8 +40,14 @@ class AineBot
 			case opening_number
 			when 1
 				post_message = "OP曲ありがと⇄大丈夫のあいねちゃん"
+			
+			when 2
+				post_message = "OP曲そこにしかないもののあいねちゃん"
+			
+			when 3
+				post_message = "OP曲ひとりじゃない!のあいねちゃん"
 			end
-		
+
 
 		when "ending"
 			ending_number = folder_name.match(/[0-9]/)[0].to_i
@@ -49,9 +55,29 @@ class AineBot
 			case ending_number
 			when 1
 				post_message = "ED曲Believe itのあいねちゃん"
+			
+			when 2
+				post_message = "ED曲プライドのあいねちゃん"
+			
+			when 3
+				post_message = "ED曲Be starのあいねちゃん"
 			end
 		
+
+		when "datacardass"
+
+			datacardass_type = folder_name.match(/(?<=\_)([a-z]+)/)[0]
+
+			case datacardass_type
+			when 'friends'
+				post_message = "データカードダス アイカツフレンズ！のあいねちゃん"
+			
+			when 'onpa'
+				post_message = "データカードダス アイカツオンパレード！のあいねちゃん"
+			end			
 		end
+
+
 
 		return post_message
 
