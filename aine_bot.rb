@@ -64,11 +64,11 @@ class AineBot
 			end
 		
 
-		when "datacardass"
+		when "dcd"
 
-			datacardass_type = folder_name.match(/(?<=\_)([a-z]+)/)[0]
+			dcd_type = folder_name.match(/(?<=\_)([a-z]+)/)[0]
 
-			case datacardass_type
+			case dcd_type
 			when 'friends'
 				post_message = "データカードダス アイカツフレンズ！のあいねちゃん"
 			
