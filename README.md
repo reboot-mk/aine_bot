@@ -1,5 +1,5 @@
 # Aine Bot
-Twitter bot who posts pictures of Yuuki Aine from the anime Aikatsu Friends.
+Twitter bot who posts pictures, videos, and GIFs of Yuuki Aine from the anime Aikatsu Friends.
 
 ## Installation
 
