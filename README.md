@@ -8,6 +8,7 @@ Twitter bot who posts pictures, videos, and GIFs of Yuuki Aine from the anime Ai
 3. `$ bundle install`
 4. Edit the config.json.default accordingly.
 5. `$ mv config.json.default config.json`
+6. Optional: if you don't already a media folder set up, use `$ ./create_dir_structure.sh` to create one.
 
 ## Usage
 
@@ -26,3 +27,5 @@ The bot relies on the media directory's structure to choose which message to pos
 | `episode_**`  | Episode screenshots. Goes from 01 to 76. |
 | `opening_*`  | Opening screenshots. Goes from 1 to 3. |
 | `ending_*`  | Ending screenshots. Goes from 1 to 3. |
+
+Using `create_dir_structure.sh` will automatically generate this structure.
