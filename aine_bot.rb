@@ -6,7 +6,7 @@ class AineBot
 
 	def initialize(media_path, consumer_key, consumer_secret, access_token, access_token_secret)
 		
-		@media_formats = ['.jpg', '.mp4', '.gif']
+		@media_formats = ['.jpg', '.mp4', '.gif', '.png']
 
 		@media_path = media_path
 		
