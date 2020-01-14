@@ -15,7 +15,7 @@ do
 	mkdir images/ending_$i
 done
 
-for i in {01..50}
+for i in {01..76}
 do
 	mkdir images/episode_$i
 done
