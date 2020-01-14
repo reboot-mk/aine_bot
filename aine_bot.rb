@@ -5,6 +5,9 @@ require 'pathname'
 class AineBot
 
 	def initialize(media_path, consumer_key, consumer_secret, access_token, access_token_secret)
+		
+		@media_formats = ['.jpg', '.mp4', '.gif']
+
 		@media_path = media_path
 		
 		@client = Twitter::REST::Client.new do |config|
@@ -31,6 +34,7 @@ class AineBot
 		case folder_name.match(/([a-z]+)/)[0]
 
 		when "episode"
+
 			episode_number 	= folder_name.match(/[0-9][0-9]/)[0].to_i
 			post_message 	= "#{episode_number}話のあいねちゃん"
 
@@ -50,6 +54,7 @@ class AineBot
 
 
 		when "ending"
+
 			ending_number = folder_name.match(/[0-9]/)[0].to_i
 
 			case ending_number
@@ -77,8 +82,6 @@ class AineBot
 			end			
 		end
 
-
-
 		return post_message
 
 	end
@@ -86,7 +89,8 @@ class AineBot
 	def post
 
 		folder = get_folder()
-		media = Pathname.new(folder).children.sample(1)[0]
+		media_list = Pathname.new(folder).children.select { |file| @media_formats.include?(File.extname(file)) }
+		media = media_list.sample(1)[0]
 
 		unless media.nil?
 			post_message = get_post_message(folder.basename.to_s)
