@@ -1,5 +1,5 @@
 require 'json'
-require_relative "aine_bot"
+require_relative "lib/aine_bot"
 
 config = JSON.parse(File.read('config.json'))
 
