@@ -6,10 +6,6 @@ class AineBot
 
 	def initialize(media_path, consumer_key, consumer_secret, access_token, access_token_secret)
 		
-		@media_formats = ['.jpg', '.mp4', '.gif', '.png']
-
-		@media_path = media_path
-		
 		@client = Twitter::REST::Client.new do |config|
 			config.consumer_key			= consumer_key
 			config.consumer_secret		= consumer_secret
@@ -17,15 +13,14 @@ class AineBot
 			config.access_token_secret 	= access_token_secret
 		end
 
+		@media_formats = ['.jpg', '.mp4', '.gif', '.png']
+
+		@media_path = media_path
+
+		@folder_list = Pathname.new(@media_path).children.select { |c| c.directory? }
+
 		@logger = Logger.new('bot.log')
 
-	end
-
-	def get_folder
-		folder_list = Pathname.new(@media_path).children.select { |c| c.directory? }
-		folder = folder_list.sample(1)[0]
-
-		return folder
 	end
 
 
@@ -88,7 +83,7 @@ class AineBot
 
 	def post
 
-		folder = get_folder()
+		folder = @folder_list.sample(1)[0]
 		media_list = Pathname.new(folder).children.select { |file| @media_formats.include?(File.extname(file)) }
 		media = media_list.sample(1)[0]
 
