@@ -1,6 +1,7 @@
 require 'twitter'
 require 'logger'
 require 'pathname'
+require 'terminal-table'
 
 class AineBot
 
@@ -17,7 +18,7 @@ class AineBot
 
 		@media_path = media_path
 
-		@folder_list = Pathname.new(@media_path).children.select { |c| c.directory? }
+		@folder_list = Pathname.new(@media_path).children.sort.select { |c| c.directory? }
 
 		@logger = Logger.new('bot.log')
 
@@ -94,6 +95,29 @@ class AineBot
 		else
 			@logger.info "Folder #{folder.basename} was empty!"	
 		end
+	end
+
+	def get_stats
+
+		table_rows 	= []
+		total_files = 0
+
+		@folder_list.each do |folder|
+			files = folder.children.select { |file| file.basename.to_s.chr() != "." }
+			table_rows << [folder.basename, files.count]
+			total_files += files.count
+		end
+
+		table = Terminal::Table.new do |t|
+			t.title 	= 'Aine Bot Stats'
+			t.headings 	= ['Category', 'File count']
+			t.rows 		= table_rows
+			t 			<< :separator
+			t 			<< ['Total', "#{total_files} media files"]
+		end
+
+		return table
+
 	end
 
 	def media_path
