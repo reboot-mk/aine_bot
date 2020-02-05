@@ -116,7 +116,9 @@ class AineBot
 			t 			<< ['Total', "#{total_files} media files"]
 		end
 
-		return table
+		out = table.to_s + "\n\n" + Time.now.strftime("Last updated on %Y-%m-%d")
+
+		return out
 
 	end
 
