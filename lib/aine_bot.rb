@@ -101,19 +101,25 @@ class AineBot
 
 		table_rows 	= []
 		total_files = 0
+		total_size 	= 0
 
 		@folder_list.each do |folder|
+			
 			files = folder.children.select { |file| file.basename.to_s.chr() != "." }
-			table_rows << [folder.basename, files.count]
+
+			size = files.sum { |f| File.stat(f).blocks * 512 }
+			total_size += size
+
+			table_rows << [folder.basename, files.count, "#{(size.to_f / 1024 / 1024).round(2) } MB"]
 			total_files += files.count
 		end
 
 		table = Terminal::Table.new do |t|
 			t.title 	= 'Aine Bot Stats'
-			t.headings 	= ['Category', 'File count']
+			t.headings 	= ['Category', 'File count', 'Size']
 			t.rows 		= table_rows
 			t 			<< :separator
-			t 			<< ['Total', "#{total_files} media files"]
+			t 			<< ['Total', "#{total_files} media files", "#{(total_size.to_f / 1024 / 1024 / 1024).round(2) } GB"]
 		end
 
 		out = table.to_s + "\n\n" + Time.now.strftime("Last updated on %Y-%m-%d")
