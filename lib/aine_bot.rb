@@ -27,14 +27,16 @@ class AineBot
 
 	def get_post_message(folder_name)
 
-		case folder_name.match(/([a-z]+)/)[0]
+		case folder_name.match(/([A-z]+)/)[0]
 
-		when "episode"
+		# Friends
+
+		when "fure_ep"
 
 			episode_number 	= folder_name.match(/[0-9][0-9]/)[0].to_i
 			post_message 	= "#{episode_number}話のあいねちゃん"
 
-		when "opening"
+		when "fure_opening"
 			opening_number 	= folder_name.match(/[0-9]/)[0].to_i
 			
 			case opening_number
@@ -49,7 +51,7 @@ class AineBot
 			end
 
 
-		when "ending"
+		when "fure_ending"
 
 			ending_number = folder_name.match(/[0-9]/)[0].to_i
 
@@ -65,17 +67,17 @@ class AineBot
 			end
 		
 
-		when "dcd"
+		when "fure_dcd"
 
-			dcd_type = folder_name.match(/(?<=\_)([a-z]+)/)[0]
+			post_message = "データカードダス アイカツフレンズ！のあいねちゃん"
 
-			case dcd_type
-			when 'friends'
-				post_message = "データカードダス アイカツフレンズ！のあいねちゃん"
+
+		# On Parade
+
+		when "onpa_dcd"
+
+			post_message = "データカードダス アイカツオンパレード！のあいねちゃん"
 			
-			when 'onpa'
-				post_message = "データカードダス アイカツオンパレード！のあいねちゃん"
-			end			
 		end
 
 		return post_message
@@ -122,7 +124,10 @@ class AineBot
 			t 			<< ['Total', "#{total_files} media files", "#{(total_size.to_f / 1024 / 1024 / 1024).round(2) } GB"]
 		end
 
-		out = table.to_s + "\n\n" + Time.now.strftime("Last updated on %Y-%m-%d")
+		out = 	table.to_s + "\n\n" +
+				"fure = Friends\n" + 
+				"onpa = On Parade" + 
+				"\n\n" + Time.now.strftime("Last updated on %Y-%m-%d")
 
 		return out
 

@@ -2,20 +2,20 @@
 
 mkdir images
 
-mkdir images/dcd_friends
-mkdir images/dcd_onpa
+mkdir images/fure_dcd
+mkdir images/onpa_dcd
 
 for i in 1 2 3
 do
-	mkdir images/opening_$i
+	mkdir images/fure_opening$i
 done
 
 for i in 1 2 3
 do
-	mkdir images/ending_$i
+	mkdir images/fure_ending$i
 done
 
 for i in {01..76}
 do
-	mkdir images/episode_$i
+	mkdir images/fure_ep$i
 done
