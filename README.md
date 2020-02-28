@@ -22,10 +22,10 @@ The bot relies on the media directory's structure to choose which message to pos
 
 | Folder name  | Description |
 | ------------- | ------------- |
-| `dcd_friends`  | Data Cardass Aikatsu Friends! screenshots. |
-| `dcd_onpa`  | Data Cardass Aikatsu On Parade! screenshots. |
-| `episode_**`  | Episode screenshots. Goes from 01 to 76. |
-| `opening_*`  | Opening screenshots. Goes from 1 to 3. |
-| `ending_*`  | Ending screenshots. Goes from 1 to 3. |
+| `fure_dcd`  | Data Cardass Aikatsu Friends! screenshots. |
+| `fure_ep**`  |  Aikatsu Friends! episode screenshots. Goes from 01 to 76. |
+| `fure_opening*`  | Aikatsu Friends! opening screenshots. Goes from 1 to 3. |
+| `fure_ending*`  | Aikatsu Friends! ending screenshots. Goes from 1 to 3. |
+| `onpa_dcd`  | Data Cardass Aikatsu On Parade! screenshots. |
 
 Using `create_dir_structure.sh` will automatically generate this structure.
