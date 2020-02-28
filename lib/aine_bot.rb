@@ -24,6 +24,19 @@ class AineBot
 
 	end
 
+	def get_media(folder)
+	
+		folder_pn = Pathname.new(folder)
+		
+		media_list = folder_pn.children.select { |file| @media_formats.include?(File.extname(file)) }
+
+		if(folder_pn.basename.to_s.include?("eyecatch"))
+			return media_list
+		else
+			return media_list.sample(1)[0]
+		end
+
+	end
 
 	def get_post_message(folder_name)
 
@@ -71,6 +84,11 @@ class AineBot
 
 			post_message = "データカードダス アイカツフレンズ！のあいねちゃん"
 
+		when "fure_eyecatch"
+
+			eyecatch_number = folder_name.match(/[0-9]/)[0].to_i
+			post_message 	= "#{eyecatch_number}期のアイキャッチのあいねちゃん"
+
 
 		# On Parade
 
@@ -87,16 +105,24 @@ class AineBot
 	def post
 
 		folder = @folder_list.sample(1)[0]
-		media_list = Pathname.new(folder).children.select { |file| @media_formats.include?(File.extname(file)) }
-		media = media_list.sample(1)[0]
+		media = get_media(folder)
 
 		unless media.nil?
+			
 			post_message = get_post_message(folder.basename.to_s)
-			@client.update_with_media(post_message, media.open)
-			@logger.info "Posted media #{media.basename} from #{folder.basename}"	
+			@client.update_with_media(post_message, media)
+			
+			if(media.is_a?(Array))
+				@logger.info "Posted media folder #{folder.basename}"	
+			else
+				@logger.info "Posted media #{media.basename} from #{folder.basename}"	
+			end
+			
+			@logger.info post_message	
 		else
 			@logger.info "Folder #{folder.basename} was empty!"	
 		end
+	
 	end
 
 	def get_stats
