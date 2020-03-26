@@ -53,10 +53,10 @@ class AineBot
 
 		case
 
-		when type_picker < 1
+		when type_picker < 0.12
 			
 			pick_list = @media_list.select do |entry| 
-				if (File.extname(entry) == ".gif" || File.extname(entry) == ".mkv")
+				if (File.extname(entry) == ".gif" || File.extname(entry) == ".mp4")
 					true
 				else
 					false
