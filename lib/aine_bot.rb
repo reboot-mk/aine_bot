@@ -165,7 +165,10 @@ class AineBot
 				@client.update_with_media(post_message, File.new(media))
 			rescue SystemCallError => e
 				@logger.error "Error occured while uploading: #{e.inspect}"
+				exit
 			end
+
+			@logger.info "Upload successful!"
 
 
 						
