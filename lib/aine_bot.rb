@@ -19,6 +19,7 @@ class AineBot
 		@media_path = media_path
 
 		@logger = Logger.new('bot.log')
+		@logger.datetime_format = "%Y-%m-%d %H:%M:%S"
 
 		@media_list = []
 		folder_list = Pathname.new(@media_path).children.sort.select { |c| c.directory? }
@@ -52,10 +53,10 @@ class AineBot
 
 		case
 
-		when type_picker < 0.15
+		when type_picker < 1
 			
 			pick_list = @media_list.select do |entry| 
-				if (File.extname(entry) == ".gif" || File.extname(entry) == ".mp4")
+				if (File.extname(entry) == ".gif" || File.extname(entry) == ".mkv")
 					true
 				else
 					false
@@ -147,24 +148,27 @@ class AineBot
 
 		media = pick_media()
 
+		puts media
+
 		unless media.nil?
 			
 			if(media.directory?)
 				post_message = get_post_message(media.basename.to_s)
+				@logger.info "Posting media folder '#{media.basename}'..."	
 			else
 				post_message = get_post_message(media.parent.basename.to_s)
+				@logger.info "Posting media '#{media.basename}' from '#{media.parent.basename}'..."	
+			end
+			@logger.info "Post message: #{post_message}"
+			
+			begin
+				@client.update_with_media(post_message, File.new(media))
+			rescue SystemCallError => e
+				@logger.error "Error occured while uploading: #{e.inspect}"
 			end
 
-			@client.update_with_media(post_message, media)
-			
-			if(media.directory?)
-				@logger.info "Posted media folder #{media.basename}"	
-			else
-				@logger.info "Posted media #{media.basename} from #{media.parent.basename}"	
-			end
-			
-			@logger.info post_message	
 
+						
 		end
 	
 	end
