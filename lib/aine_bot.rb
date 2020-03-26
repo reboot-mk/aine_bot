@@ -148,8 +148,6 @@ class AineBot
 
 		media = pick_media()
 
-		puts media
-
 		unless media.nil?
 			
 			if(media.directory?)
@@ -161,9 +159,13 @@ class AineBot
 			end
 			@logger.info "Post message: #{post_message}"
 			
+			if media.size > 5242880
+				@logger.warn "File size is above 5242880 bytes, this probably won't work (#{media.size} bytes)"
+			end
+
 			begin
 				@client.update_with_media(post_message, File.new(media))
-			rescue SystemCallError => e
+			rescue  => e
 				@logger.error "Error occured while uploading: #{e.inspect}"
 				exit
 			end
