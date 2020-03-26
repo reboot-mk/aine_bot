@@ -18,25 +18,66 @@ class AineBot
 
 		@media_path = media_path
 
-		@folder_list = Pathname.new(@media_path).children.sort.select { |c| c.directory? }
-
 		@logger = Logger.new('bot.log')
 
-	end
+		@media_list = []
+		folder_list = Pathname.new(@media_path).children.sort.select { |c| c.directory? }
+		folder_list.each do |folder|
 
-	def get_media(folder)
-	
-		folder_pn = Pathname.new(folder)
-		
-		media_list = folder_pn.children.select { |file| @media_formats.include?(File.extname(file)) }
+			folder = Pathname.new(folder)
 
-		if(folder_pn.basename.to_s.include?("eyecatch"))
-			return media_list
-		else
-			return media_list.sample(1)[0]
+			# Eyecatches are added as a single entry in the file list, because the bot should
+			# always post two images
+
+			unless folder.basename.to_s.include?("eyecatch")
+
+				files = folder.children.select { |file| file.basename.to_s.chr() != "." }
+
+				files.each do |file|
+					file = Pathname.new(file)
+					@media_list.push(file)
+				end
+
+			else
+				@media_list.push(folder)
+			end
+
 		end
 
 	end
+
+	def pick_media
+
+		type_picker = rand()
+
+		case
+
+		when type_picker < 0.15
+			
+			pick_list = @media_list.select do |entry| 
+				if (File.extname(entry) == ".gif" || File.extname(entry) == ".mp4")
+					true
+				else
+					false
+				end
+			end
+
+		when type_picker < 1
+
+			pick_list = @media_list.select do |entry| 
+				if (File.extname(entry) == ".jpg" || File.extname(entry) == ".png") || entry.directory?
+					true
+				else
+					false
+				end
+			end
+
+		end
+
+		return pick_list.sample(1)[0]
+
+	end
+
 
 	def get_post_message(folder_name)
 
@@ -104,76 +145,117 @@ class AineBot
 
 	def post
 
-		folder = @folder_list.sample(1)[0]
-		media = get_media(folder)
+		media = pick_media()
 
 		unless media.nil?
 			
-			post_message = get_post_message(folder.basename.to_s)
+			if(media.directory?)
+				post_message = get_post_message(media.basename.to_s)
+			else
+				post_message = get_post_message(media.parent.basename.to_s)
+			end
+
 			# @client.update_with_media(post_message, media)
 			
-			if(media.is_a?(Array))
-				@logger.info "Posted media folder #{folder.basename}"	
+			if(media.directory?)
+				@logger.info "Posted media folder #{media.basename}"	
 			else
-				@logger.info "Posted media #{media.basename} from #{folder.basename}"	
+				@logger.info "Posted media #{media.basename} from #{media.parent.basename}"	
 			end
 			
 			@logger.info post_message	
-		else
-			@logger.info "Folder #{folder.basename} was empty!"	
+
 		end
 	
 	end
 
 	def get_stats
 
-		table_rows 		= []
-		total_files 	= 0
-		total_images 	= 0
-		total_gifs 		= 0
-		total_videos 	= 0
-		total_size 		= 0
+		# Gathering data
 
-		@folder_list.each do |folder|
-			
-			files = folder.children.select { |file| file.basename.to_s.chr() != "." }
+		media_stats = Hash.new
+		totals 		= Hash.new(0)
+		@media_list.each do |entry|
 
-			folder_images 	= 0
-			folder_gifs 	= 0
-			folder_videos 	= 0
+			unless entry.directory?
 
-			files.each do |file|
+				key = entry.parent.basename.to_s
+				media_stats.key?(key) ? (stats = media_stats[key]) : (stats = Hash.new(0))
 
-				case File.extname(file)
+				stats[:files] 	+= 1
+				stats[:size] 	+= File.stat(entry).blocks * 512 
+				totals[:files] 	+= 1
+				totals[:size] 	+= File.stat(entry).blocks * 512 
+
+				case File.extname(entry)
 
 				when ".png"
 				when ".jpg"
-					folder_images += 1
+					stats[:img] 	+= 1
+					totals[:img] 	+= 1
 
 				when ".gif"
-					folder_gifs += 1
+					stats[:gif] 	+= 1
+					totals[:gif] 	+= 1
 
 				when ".mp4"
-					folder_videos += 1
+					stats[:vid] 	+= 1
+					totals[:vid] 	+= 1
+				end
+
+
+			else
+
+				key = entry.basename.to_s
+				media_stats.key?(key) ? (stats = media_stats[key]) : (stats = Hash.new(0))
+
+				child_files = entry.children.select { |file| file.basename.to_s.chr() != "." }
+
+				child_files.each do |file|
+
+					stats[:files] 	+= 1
+					stats[:size] 	+= File.stat(file).blocks * 512 
+					totals[:files] 	+= 1
+					totals[:size] 	+= File.stat(file).blocks * 512 
+
+					case File.extname(file)
+
+					when ".png"
+					when ".jpg"
+						stats[:img] 	+= 1
+						totals[:img] 	+= 1
+
+					when ".gif"
+						stats[:gif] 	+= 1
+						totals[:gif] 	+= 1
+
+					when ".mp4"
+						stats[:vid] 	+= 1
+						totals[:vid] 	+= 1
+					end
 
 				end
 
 			end
 
-			size = files.sum { |f| File.stat(f).blocks * 512 }
-			
-			total_images 	+= folder_images
-			total_gifs 		+= folder_gifs
-			total_videos 	+= folder_videos
-			total_size 		+= size
+			media_stats[key] = stats
 
-			table_rows << [	folder.basename,
-							folder_images,
-							folder_gifs,
-							folder_videos,
-							files.count, 
-							"#{(size.to_f / 1024 / 1024).round(2) } MB"]
-			total_files += files.count
+		end
+
+		# Generating table
+
+		table_rows = []
+
+		media_stats.each do |name, stats|
+
+			table_rows << [	name,
+							stats[:img],
+							stats[:gif],
+							stats[:vid],
+							stats[:files],
+							"#{(stats[:size].to_f / 1024 / 1024).round(2) } MB"
+			]
+
 		end
 
 		table = Terminal::Table.new do |t|
@@ -181,12 +263,14 @@ class AineBot
 			t.headings 	= ['Category', 'Images', 'GIFs', 'Videos', 'File count', 'Size']
 			t.rows 		= table_rows
 			t 			<< :separator
-			t 			<< ['Total',
-							total_images,
-							total_gifs,
-							total_videos,
-							total_files,
-							"#{(total_size.to_f / 1024 / 1024 / 1024).round(2) } GB"]
+			t 			<< [
+								'Total', 
+								totals[:img],
+								totals[:gif],
+								totals[:vid],
+								totals[:files], 
+								"#{(totals[:size].to_f / 1024 / 1024 / 1024).round(2) } GB"
+						   ]
 		end
 
 		out = 	table.to_s + "\n\n" +
@@ -196,14 +280,7 @@ class AineBot
 
 		return out
 
-	end
 
-	def media_path
-		@media_path
-	end
-
-	def media_path=(media_path)
-	  @media_path = media_path
 	end
 
 end
