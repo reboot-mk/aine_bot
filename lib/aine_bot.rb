@@ -155,7 +155,7 @@ class AineBot
 				post_message = get_post_message(media.parent.basename.to_s)
 			end
 
-			# @client.update_with_media(post_message, media)
+			@client.update_with_media(post_message, media)
 			
 			if(media.directory?)
 				@logger.info "Posted media folder #{media.basename}"	
