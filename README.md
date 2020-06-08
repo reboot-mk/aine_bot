@@ -12,9 +12,14 @@ Twitter bot who posts pictures, videos, and GIFs of Yuuki Aine from the anime Ai
 
 ## Usage
 
-Use `$ ruby post.rb` to post a random image.
+Use `$ ruby bot.rb <command> <arguments>` or `$ ./bot.rb <command> <arguments>`.
 
-Use something like crontab to run this command every hour or so. 
+## List of commands 
+
+| Command  | Arguments | Description |
+| ------------- | -------------  | ------------- |
+| post  | -d, --dry: Don't actually post the image. | Post a random image from the storage path. |
+| stats  | |  Print a stats table to STDOUT. |
 
 ## Media directory structure
 

@@ -5,8 +5,10 @@ require 'terminal-table'
 
 class AineBot
 
-	def initialize(media_path, consumer_key, consumer_secret, access_token, access_token_secret)
+	def initialize(bot_path, storage_path, consumer_key, consumer_secret, access_token, access_token_secret)
 		
+		@bot_path = bot_path
+
 		@client = Twitter::REST::Client.new do |config|
 			config.consumer_key			= consumer_key
 			config.consumer_secret		= consumer_secret
@@ -16,13 +18,13 @@ class AineBot
 
 		@media_formats = ['.jpg', '.mp4', '.gif', '.png']
 
-		@media_path = media_path
+		@storage_path = storage_path
 
-		@logger = Logger.new('bot.log')
+		@logger = Logger.new(File.join(@bot_path, 'bot.log'))
 		@logger.datetime_format = "%Y-%m-%d %H:%M:%S"
 
 		@media_list = []
-		folder_list = Pathname.new(@media_path).children.sort.select { |c| c.directory? }
+		folder_list = Pathname.new(@storage_path).children.sort.select { |c| c.directory? }
 		folder_list.each do |folder|
 
 			folder = Pathname.new(folder)
@@ -144,7 +146,7 @@ class AineBot
 
 	end
 
-	def post
+	def post(dry)
 
 		media = pick_media()
 
@@ -163,12 +165,15 @@ class AineBot
 				@logger.warn "File size is above 5242880 bytes, this probably won't work (#{media.size} bytes)"
 			end
 
-			begin
-				@client.update_with_media(post_message, File.new(media))
-			rescue  => e
-				@logger.error "Error occured while uploading: #{e.inspect}"
-				exit
+			unless dry
+				begin
+					@client.update_with_media(post_message, File.new(media))
+				rescue  => e
+				 	@logger.error "Error occured while uploading: #{e.inspect}"
+				 	exit
+				end
 			end
+
 
 			@logger.info "Upload successful!"
 
@@ -179,8 +184,6 @@ class AineBot
 	end
 
 	def get_stats
-
-		# Gathering data
 
 		media_stats = Hash.new
 		totals 		= Hash.new(0)
@@ -251,18 +254,26 @@ class AineBot
 
 		end
 
-		# Generating table
+		result = Hash.new
+		result[:folders] = media_stats		
+		result[:totals]  = totals
+
+		return result
+
+	end
+
+	def print_stats(stats)
 
 		table_rows = []
 
-		media_stats.each do |name, stats|
+		stats[:folders].each do |name, folder_stats|
 
 			table_rows << [	name,
-							stats[:img],
-							stats[:gif],
-							stats[:vid],
-							stats[:files],
-							"#{(stats[:size].to_f / 1024 / 1024).round(2) } MB"
+							folder_stats[:img],
+							folder_stats[:gif],
+							folder_stats[:vid],
+							folder_stats[:files],
+							"#{(folder_stats[:size].to_f / 1024 / 1024).round(2) } MB"
 			]
 
 		end
@@ -274,11 +285,11 @@ class AineBot
 			t 			<< :separator
 			t 			<< [
 								'Total', 
-								totals[:img],
-								totals[:gif],
-								totals[:vid],
-								totals[:files], 
-								"#{(totals[:size].to_f / 1024 / 1024 / 1024).round(2) } GB"
+								stats[:totals][:img],
+								stats[:totals][:gif],
+								stats[:totals][:vid],
+								stats[:totals][:files], 
+								"#{(stats[:totals][:size].to_f / 1024 / 1024 / 1024).round(2) } GB"
 						   ]
 		end
 
@@ -288,7 +299,6 @@ class AineBot
 				"\n\n" + Time.now.strftime("Last updated on %Y-%m-%d")
 
 		return out
-
 
 	end
 

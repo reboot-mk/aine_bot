@@ -1,5 +1,5 @@
 {
-	"media_path"			: "/path/to/media/folder",
+	"storage_path"			: "/path/to/media/folder",
 
 	"consumer_key"			: "xxx",
 	"consumer_secret"		: "xxx",
