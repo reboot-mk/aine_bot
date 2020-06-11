@@ -3,11 +3,11 @@
 require 'json'
 require_relative "lib/aine_bot"
 
-BOT_PATH=File.expand_path File.dirname(__FILE__)
+BotPath 			= File.expand_path File.dirname(__FILE__)
+config 				= JSON.parse(File.read(File.join(BotPath, 'config.json')))
+config['bot_path'] 	= BotPath
 
-config = JSON.parse(File.read(File.join(BOT_PATH, 'config.json')))
-
-bot = AineBot.new(BOT_PATH, config['storage_path'], config['consumer_key'], config['consumer_secret'], config['access_token'], config['access_token_secret'])
+bot = AineBot.new(config)
 
 unless !ARGV[0]
 

@@ -5,20 +5,20 @@ require 'terminal-table'
 
 class AineBot
 
-	def initialize(bot_path, storage_path, consumer_key, consumer_secret, access_token, access_token_secret)
+	def initialize(bot_config)
 		
-		@bot_path = bot_path
+		@bot_path = bot_config['bot_path']
 
-		@client = Twitter::REST::Client.new do |config|
-			config.consumer_key			= consumer_key
-			config.consumer_secret		= consumer_secret
-			config.access_token 		= access_token
-			config.access_token_secret 	= access_token_secret
+		@twitter = Twitter::REST::Client.new do |config|
+			config.consumer_key			= bot_config['consumer_key']
+			config.consumer_secret		= bot_config['consumer_secret']
+			config.access_token 		= bot_config['access_token']
+			config.access_token_secret 	= bot_config['access_token_secret']
 		end
 
 		@media_formats = ['.jpg', '.mp4', '.gif', '.png']
 
-		@storage_path = storage_path
+		@storage_path = bot_config['storage_path']
 
 		@logger = Logger.new(File.join(@bot_path, 'bot.log'))
 		@logger.datetime_format = "%Y-%m-%d %H:%M:%S"
@@ -167,7 +167,7 @@ class AineBot
 
 			unless dry
 				begin
-					@client.update_with_media(post_message, File.new(media))
+					@twitter.update_with_media(post_message, File.new(media))
 				rescue  => e
 				 	@logger.error "Error occured while uploading: #{e.inspect}"
 				 	exit
