@@ -136,6 +136,19 @@ class AineBot
 
 		# On Parade
 
+		when "onpa_ep"
+
+			episode_number 	= folder_name.match(/[0-9][0-9]/)[0].to_i
+			post_message 	= "アイカツオンパレード！#{episode_number}話のあいねちゃん"
+
+		when "onpa_opening"
+			
+			post_message 	= "OP曲君のEntranceのあいねちゃん"
+
+		when "onpa_ending"
+
+			post_message 	= "ED曲アイドル活動！オンパレード！のあいねちゃん"
+
 		when "onpa_dcd"
 
 			post_message = "データカードダス アイカツオンパレード！のあいねちゃん"
