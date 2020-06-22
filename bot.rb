@@ -4,7 +4,7 @@ require 'yaml'
 require_relative "lib/aine_bot"
 
 BotPath = File.expand_path File.dirname(__FILE__)
-config 	= YAML.load(File.read(File.join(BotPath, 'config.json')))
+config 	= YAML.load(File.read(File.join(BotPath, 'config.yaml')))
 
 config['bot_path'] = BotPath
 
