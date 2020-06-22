@@ -1,11 +1,12 @@
 #!/bin/ruby
 
-require 'json'
+require 'yaml'
 require_relative "lib/aine_bot"
 
-BotPath 			= File.expand_path File.dirname(__FILE__)
-config 				= JSON.parse(File.read(File.join(BotPath, 'config.json')))
-config['bot_path'] 	= BotPath
+BotPath = File.expand_path File.dirname(__FILE__)
+config 	= YAML.load(File.read(File.join(BotPath, 'config.json')))
+
+config['bot_path'] = BotPath
 
 bot = AineBot.new(config)
 

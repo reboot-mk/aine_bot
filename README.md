@@ -6,9 +6,9 @@ Twitter bot who posts pictures, videos, and GIFs of Yuuki Aine from the anime Ai
 1. `$ git clone https://github.com/IrreversibleReboot/aine_bot.git`
 2. `$ cd aine_bot`
 3. `$ bundle install`
-4. Edit the config.json.default accordingly.
-5. `$ mv config.json.default config.json`
-6. Optional: if you don't already a media folder set up, use `$ ./create_dir_structure.sh` to create one.
+5. `$ cp config.yaml.default config.yaml`
+4. Edit the config.yaml accordingly.
+6. Optional: if you don't already have a media folder set up, use `$ ./create_dir_structure.sh` to create one.
 
 ## Usage
 
