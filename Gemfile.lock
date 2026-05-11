@@ -1,8 +1,8 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    addressable (2.7.0)
-      public_suffix (>= 2.0.2, < 5.0)
+    addressable (2.9.0)
+      public_suffix (>= 2.0.2, < 8.0)
     buftok (0.2.0)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
@@ -21,8 +21,10 @@ GEM
       thread_safe (~> 0.3, >= 0.3.1)
     multipart-post (2.1.1)
     naught (1.1.0)
-    public_suffix (4.0.3)
+    public_suffix (7.0.5)
     simple_oauth (0.3.1)
+    terminal-table (4.0.0)
+      unicode-display_width (>= 1.1.1, < 4)
     thread_safe (0.3.6)
     twitter (6.2.0)
       addressable (~> 2.3)
@@ -38,12 +40,16 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.6)
+    unicode-display_width (3.2.0)
+      unicode-emoji (~> 4.1)
+    unicode-emoji (4.2.0)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   logger
+  terminal-table
   twitter
 
 BUNDLED WITH
